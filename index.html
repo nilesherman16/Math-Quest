@@ -502,6 +502,234 @@
             }
         }
 
+        /* === GRADE OVERLAY === */
+        .grade-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(26, 26, 46, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+        }
+
+        .grade-overlay.hidden {
+            display: none;
+        }
+
+        .grade-picker {
+            text-align: center;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .grade-picker h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: var(--gold);
+            text-shadow: 2px 2px 0 var(--accent);
+            margin-bottom: 24px;
+        }
+
+        .grade-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .grade-btn {
+            padding: 16px 8px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            background: var(--panel);
+            border: 2px solid var(--border);
+            color: var(--text);
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s, border-color 0.2s;
+        }
+
+        .grade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .grade-btn:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        .grade-btn .grade-num {
+            display: block;
+            font-size: 18px;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .grade-btn .grade-label {
+            font-family: 'Silkscreen', cursive;
+            font-size: 9px;
+            color: var(--muted);
+        }
+
+        /* === GRADE BADGE === */
+        .grade-badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 12px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .grade-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 0 rgba(0,0,0,0.3);
+        }
+
+        .grade-badge:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        /* === SAVE & HISTORY === */
+        .save-button {
+            display: block;
+            width: 100%;
+            padding: 10px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            background: var(--green);
+            color: var(--bg);
+            border: none;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+        }
+
+        .save-button:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        .save-button.hidden {
+            display: none;
+        }
+
+        .history-toggle {
+            display: block;
+            width: 100%;
+            padding: 10px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            background: var(--panel);
+            border: 2px solid var(--border);
+            color: var(--muted);
+            cursor: pointer;
+            margin-top: 12px;
+            transition: transform 0.1s, box-shadow 0.1s, color 0.2s;
+        }
+
+        .history-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+            color: var(--gold);
+        }
+
+        .history-toggle:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        .history-panel {
+            background: var(--panel);
+            border: 2px solid var(--border);
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .history-panel.hidden {
+            display: none;
+        }
+
+        .history-panel h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .history-empty {
+            text-align: center;
+            font-size: 10px;
+            color: var(--muted);
+            padding: 12px;
+        }
+
+        .history-entry {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 4px;
+            padding: 8px 4px;
+            border-bottom: 1px solid var(--border);
+            font-size: 9px;
+        }
+
+        .history-entry:last-child {
+            border-bottom: none;
+        }
+
+        .history-entry .h-date {
+            color: var(--muted);
+        }
+
+        .history-entry .h-grade {
+            color: var(--accent);
+            text-align: center;
+        }
+
+        .history-entry .h-score {
+            color: var(--gold);
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        .history-entry .h-accuracy {
+            color: var(--green);
+            text-align: right;
+        }
+
+        .history-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 4px;
+            padding: 4px 4px 8px;
+            font-size: 8px;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+            letter-spacing: 1px;
+        }
+
+        .history-header span:nth-child(2),
+        .history-header span:nth-child(3) {
+            text-align: center;
+        }
+
+        .history-header span:last-child {
+            text-align: right;
+        }
+
         /* === RESPONSIVE === */
         @media (max-width: 500px) {
             .header h1 {
@@ -539,11 +767,20 @@
     </style>
 </head>
 <body>
+    <!-- GRADE SELECTION OVERLAY -->
+    <div class="grade-overlay" id="grade-overlay">
+        <div class="grade-picker">
+            <h2>SELECT YOUR GRADE</h2>
+            <div class="grade-grid" id="grade-grid"></div>
+        </div>
+    </div>
+
     <div class="game-container">
         <!-- HEADER -->
         <div class="header drop-in" style="animation-delay: 0s">
             <h1>&#x1F9EE; MATH QUEST</h1>
             <p class="subtitle">Solve today's puzzle!</p>
+            <div class="grade-badge" id="grade-badge" title="Click to change grade">GRADE 1</div>
         </div>
 
         <!-- STATS BAR -->
@@ -594,6 +831,22 @@
             <div class="streak-dots" id="streak-dots"></div>
             <div class="best-streak">Best: <span id="best-streak">0</span></div>
         </div>
+
+        <!-- SAVE SCORE BUTTON -->
+        <button class="save-button hidden" id="save-button">SAVE SCORE</button>
+
+        <!-- SCORE HISTORY -->
+        <button class="history-toggle" id="history-toggle">SCORES</button>
+        <div class="history-panel hidden" id="history-panel">
+            <h3>SCORE HISTORY</h3>
+            <div class="history-header">
+                <span>DATE</span>
+                <span>GRADE</span>
+                <span>SCORE</span>
+                <span>ACC</span>
+            </div>
+            <div class="history-list" id="history-list"></div>
+        </div>
     </div>
 
     <script>
@@ -606,6 +859,30 @@
         const STREAK_DOTS = 10;
         const PARTICLE_EMOJIS = ['\u2B50', '\u2728', '\uD83C\uDF89', '\uD83D\uDCA5', '\uD83D\uDD25'];
 
+        // Grade-specific difficulty configs
+        // generatorIndices: 0=Add, 1=Sub, 2=Mult, 3=Mystery, 4=Div
+        const GRADE_CONFIGS = {
+            1: { label: 'Grade 1', generatorIndices: [0],          addSubMax: 10,  multMax: 3,  divMaxDivisor: 2, divMaxAnswer: 5,  mysteryMax: 10  },
+            2: { label: 'Grade 2', generatorIndices: [0, 1],       addSubMax: 20,  multMax: 4,  divMaxDivisor: 3, divMaxAnswer: 8,  mysteryMax: 15  },
+            3: { label: 'Grade 3', generatorIndices: [0, 1, 2],    addSubMax: 50,  multMax: 5,  divMaxDivisor: 5, divMaxAnswer: 10, mysteryMax: 25  },
+            4: { label: 'Grade 4', generatorIndices: [0, 1, 2, 4], addSubMax: 100, multMax: 10, divMaxDivisor: 8, divMaxAnswer: 15, mysteryMax: 40  },
+            5: { label: 'Grade 5', generatorIndices: [0, 1, 2, 3, 4], addSubMax: 150, multMax: 12, divMaxDivisor: 10, divMaxAnswer: 20, mysteryMax: 60 },
+            6: { label: 'Grade 6', generatorIndices: [0, 1, 2, 3, 4], addSubMax: 200, multMax: 13, divMaxDivisor: 12, divMaxAnswer: 25, mysteryMax: 80 },
+            7: { label: 'Grade 7', generatorIndices: [0, 1, 2, 3, 4], addSubMax: 300, multMax: 15, divMaxDivisor: 15, divMaxAnswer: 30, mysteryMax: 100 },
+            8: { label: 'Grade 8', generatorIndices: [0, 1, 2, 3, 4], addSubMax: 500, multMax: 20, divMaxDivisor: 18, divMaxAnswer: 40, mysteryMax: 150 }
+        };
+
+        const GRADE_DESCRIPTIONS = {
+            1: 'Ages 6-7',
+            2: 'Ages 7-8',
+            3: 'Ages 8-9',
+            4: 'Ages 9-10',
+            5: 'Ages 10-11',
+            6: 'Ages 11-12',
+            7: 'Ages 12-13',
+            8: 'Ages 13-14'
+        };
+
         // === GAME STATE ===
         let state = {
             score: 0,
@@ -613,7 +890,10 @@
             bestStreak: 0,
             level: 1,
             puzzlesSolved: 0,
-            currentPuzzle: null
+            currentPuzzle: null,
+            grade: null,
+            totalAttempts: 0,
+            history: []
         };
 
         // === DOM REFERENCES ===
@@ -633,7 +913,14 @@
             feedbackMessage: document.getElementById('feedback-message'),
             nextButton: document.getElementById('next-button'),
             streakDots: document.getElementById('streak-dots'),
-            bestStreak: document.getElementById('best-streak')
+            bestStreak: document.getElementById('best-streak'),
+            gradeOverlay: document.getElementById('grade-overlay'),
+            gradeGrid: document.getElementById('grade-grid'),
+            gradeBadge: document.getElementById('grade-badge'),
+            saveButton: document.getElementById('save-button'),
+            historyToggle: document.getElementById('history-toggle'),
+            historyPanel: document.getElementById('history-panel'),
+            historyList: document.getElementById('history-list')
         };
 
         // === PERSISTENCE ===
@@ -644,7 +931,10 @@
                     streak: state.streak,
                     bestStreak: state.bestStreak,
                     level: state.level,
-                    puzzlesSolved: state.puzzlesSolved
+                    puzzlesSolved: state.puzzlesSolved,
+                    grade: state.grade,
+                    totalAttempts: state.totalAttempts,
+                    history: state.history
                 }));
             } catch (e) {
                 // localStorage may be unavailable
@@ -661,6 +951,9 @@
                     state.bestStreak = data.bestStreak || 0;
                     state.level = data.level || 1;
                     state.puzzlesSolved = data.puzzlesSolved || 0;
+                    state.grade = data.grade || null;
+                    state.totalAttempts = data.totalAttempts || 0;
+                    state.history = data.history || [];
                 }
             } catch (e) {
                 // Start fresh if load fails
@@ -672,11 +965,17 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
+        function getGradeConfig() {
+            return GRADE_CONFIGS[state.grade] || GRADE_CONFIGS[1];
+        }
+
         // === PUZZLE GENERATORS ===
+        // Each generator uses grade config as baseline + level for additional scaling
         function generateAddition(level) {
-            const max = 10 + level * 15;
-            const a = randomInt(1, max);
-            const b = randomInt(1, max);
+            var cfg = getGradeConfig();
+            var max = cfg.addSubMax + level * 5;
+            var a = randomInt(1, max);
+            var b = randomInt(1, max);
             return {
                 type: 'Addition',
                 question: a + ' + ' + b,
@@ -686,9 +985,10 @@
         }
 
         function generateSubtraction(level) {
-            const max = 10 + level * 15;
-            const b = randomInt(1, max);
-            const a = randomInt(b, max + b);
+            var cfg = getGradeConfig();
+            var max = cfg.addSubMax + level * 5;
+            var b = randomInt(1, max);
+            var a = randomInt(b, max + b);
             return {
                 type: 'Subtraction',
                 question: a + ' \u2212 ' + b,
@@ -698,9 +998,10 @@
         }
 
         function generateMultiplication(level) {
-            const max = Math.min(3 + level * 2, 12);
-            const a = randomInt(2, max);
-            const b = randomInt(2, max);
+            var cfg = getGradeConfig();
+            var max = Math.min(cfg.multMax + level, 25);
+            var a = randomInt(2, max);
+            var b = randomInt(2, max);
             return {
                 type: 'Multiplication',
                 question: a + ' \u00D7 ' + b,
@@ -710,10 +1011,11 @@
         }
 
         function generateMystery(level) {
-            const max = 5 + level * 8;
-            const answer = randomInt(1, max);
-            const b = randomInt(1, max);
-            const sum = answer + b;
+            var cfg = getGradeConfig();
+            var max = cfg.mysteryMax + level * 5;
+            var answer = randomInt(1, max);
+            var b = randomInt(1, max);
+            var sum = answer + b;
             return {
                 type: 'Mystery Number',
                 question: '? + ' + b + ' = ' + sum,
@@ -723,11 +1025,12 @@
         }
 
         function generateDivision(level) {
-            const maxDivisor = Math.min(2 + level, 10);
-            const maxAnswer = 10 + level * 3;
-            const b = randomInt(2, maxDivisor);
-            const answer = randomInt(1, maxAnswer);
-            const a = b * answer;
+            var cfg = getGradeConfig();
+            var maxDivisor = Math.min(cfg.divMaxDivisor + level, 20);
+            var maxAnswer = cfg.divMaxAnswer + level * 2;
+            var b = randomInt(2, maxDivisor);
+            var answer = randomInt(1, maxAnswer);
+            var a = b * answer;
             return {
                 type: 'Division',
                 question: a + ' \u00F7 ' + b,
@@ -745,13 +1048,40 @@
         ];
 
         function generatePuzzle() {
-            // Level 1: first 3 + up to 1 more = 3 types
-            // Level 2+: all 5 types
-            const available = state.level >= 2
-                ? ALL_GENERATORS
-                : ALL_GENERATORS.slice(0, Math.min(3 + state.level - 1, 5));
-            const gen = available[Math.floor(Math.random() * available.length)];
+            var cfg = getGradeConfig();
+            var indices = cfg.generatorIndices;
+            var available = indices.map(function(i) { return ALL_GENERATORS[i]; });
+            var gen = available[Math.floor(Math.random() * available.length)];
             state.currentPuzzle = gen(state.level);
+        }
+
+        // === GRADE SELECTION ===
+        function initGradeOverlay() {
+            dom.gradeGrid.innerHTML = '';
+            for (var g = 1; g <= 8; g++) {
+                var btn = document.createElement('button');
+                btn.className = 'grade-btn';
+                btn.dataset.grade = g;
+                btn.innerHTML = '<span class="grade-num">' + g + '</span><span class="grade-label">' + GRADE_DESCRIPTIONS[g] + '</span>';
+                btn.addEventListener('click', function() {
+                    selectGrade(parseInt(this.dataset.grade, 10));
+                });
+                dom.gradeGrid.appendChild(btn);
+            }
+        }
+
+        function selectGrade(grade) {
+            state.grade = grade;
+            dom.gradeOverlay.classList.add('hidden');
+            dom.gradeBadge.textContent = 'GRADE ' + grade;
+            saveState();
+            generatePuzzle();
+            displayPuzzle();
+            updateUI();
+        }
+
+        function showGradeOverlay() {
+            dom.gradeOverlay.classList.remove('hidden');
         }
 
         // === UI UPDATES ===
@@ -761,8 +1091,12 @@
             dom.level.textContent = state.level;
             dom.bestStreak.textContent = state.bestStreak;
             dom.difficultyLabel.textContent = DIFFICULTY_LABELS[state.level - 1];
+            if (state.grade) {
+                dom.gradeBadge.textContent = 'GRADE ' + state.grade;
+            }
             updateStars();
             updateStreakDots();
+            updateSaveButton();
         }
 
         function updateStars() {
@@ -796,6 +1130,14 @@
                     dot.textContent = '';
                 }
             });
+        }
+
+        function updateSaveButton() {
+            if (state.totalAttempts > 0) {
+                dom.saveButton.classList.remove('hidden');
+            } else {
+                dom.saveButton.classList.add('hidden');
+            }
         }
 
         function displayPuzzle() {
@@ -862,6 +1204,9 @@
 
             var userAnswer = parseInt(inputVal, 10);
 
+            // Track attempts
+            state.totalAttempts++;
+
             // Disable input
             dom.answerInput.disabled = true;
             dom.goButton.disabled = true;
@@ -925,6 +1270,64 @@
             updateUI();
         }
 
+        // === SCORE HISTORY ===
+        function saveSession() {
+            if (state.totalAttempts === 0) return;
+
+            var accuracy = state.totalAttempts > 0
+                ? Math.round((state.puzzlesSolved / state.totalAttempts) * 100)
+                : 0;
+
+            state.history.push({
+                date: new Date().toLocaleDateString(),
+                grade: state.grade,
+                score: state.score,
+                puzzlesSolved: state.puzzlesSolved,
+                totalAttempts: state.totalAttempts,
+                accuracy: accuracy
+            });
+
+            // Reset session stats
+            state.score = 0;
+            state.streak = 0;
+            state.level = 1;
+            state.puzzlesSolved = 0;
+            state.totalAttempts = 0;
+
+            saveState();
+            renderHistory();
+            generatePuzzle();
+            displayPuzzle();
+            updateUI();
+        }
+
+        function toggleHistory() {
+            dom.historyPanel.classList.toggle('hidden');
+            renderHistory();
+        }
+
+        function renderHistory() {
+            dom.historyList.innerHTML = '';
+
+            if (state.history.length === 0) {
+                dom.historyList.innerHTML = '<div class="history-empty">No saved scores yet</div>';
+                return;
+            }
+
+            // Show newest first
+            var sorted = state.history.slice().reverse();
+            sorted.forEach(function(entry) {
+                var row = document.createElement('div');
+                row.className = 'history-entry';
+                row.innerHTML =
+                    '<span class="h-date">' + entry.date + '</span>' +
+                    '<span class="h-grade">G' + (entry.grade || '?') + '</span>' +
+                    '<span class="h-score">' + entry.score + '</span>' +
+                    '<span class="h-accuracy">' + (entry.accuracy != null ? entry.accuracy : 0) + '%</span>';
+                dom.historyList.appendChild(row);
+            });
+        }
+
         // === EVENT LISTENERS ===
         dom.goButton.addEventListener('click', submitAnswer);
 
@@ -940,12 +1343,29 @@
             }
         });
 
+        dom.gradeBadge.addEventListener('click', showGradeOverlay);
+
+        dom.saveButton.addEventListener('click', saveSession);
+
+        dom.historyToggle.addEventListener('click', toggleHistory);
+
         // === INIT ===
         loadState();
+        initGradeOverlay();
         initStreakDots();
-        generatePuzzle();
-        displayPuzzle();
+
+        if (state.grade) {
+            // Returning user — hide overlay, start game
+            dom.gradeOverlay.classList.add('hidden');
+            generatePuzzle();
+            displayPuzzle();
+        } else {
+            // First visit — show grade selection
+            showGradeOverlay();
+        }
+
         updateUI();
+        renderHistory();
     </script>
 </body>
 </html>
