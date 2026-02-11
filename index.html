@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Math Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen&display=swap" rel="stylesheet">
+    <style>
+        /* === RESET & VARIABLES === */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #1a1a2e;
+            --panel: #16213e;
+            --border: #0f3460;
+            --accent: #e94560;
+            --gold: #f5c518;
+            --green: #00e676;
+            --text: #eaeaea;
+            --muted: #7a7a9a;
+            --pixel: 4px;
+        }
+
+        /* === BODY === */
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Silkscreen', cursive;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* === PIXEL GRID OVERLAY === */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 16px 16px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* === SCANLINE EFFECT === */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.1) 2px,
+                rgba(0,0,0,0.1) 4px
+            );
+            pointer-events: none;
+            z-index: 1001;
+        }
+
+        /* === GAME CONTAINER === */
+        .game-container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        /* === HEADER === */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            color: var(--gold);
+            text-shadow: 3px 3px 0 var(--accent), 0 0 20px rgba(245, 197, 24, 0.3);
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* === STATS BAR === */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .stat-box {
+            background: var(--panel);
+            border: 2px solid var(--border);
+            padding: 12px 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* === PIXEL CORNER EFFECT === */
+        .pixel-corners {
+            position: relative;
+        }
+
+        .pixel-corners::before,
+        .pixel-corners::after {
+            content: '';
+            position: absolute;
+            width: var(--pixel);
+            height: var(--pixel);
+            background: var(--bg);
+            z-index: 2;
+        }
+
+        .pixel-corners::before {
+            top: -1px;
+            left: -1px;
+            box-shadow:
+                calc(var(--pixel) * -0) calc(var(--pixel) * -0) 0 0 var(--bg),
+                0 0 0 0 transparent;
+        }
+
+        .pixel-corners::after {
+            bottom: -1px;
+            right: -1px;
+        }
+
+        .stat-box::before {
+            top: -1px;
+            left: -1px;
+            box-shadow:
+                0 0 0 0 var(--bg);
+        }
+
+        .stat-box::after {
+            bottom: -1px;
+            right: -1px;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            color: var(--gold);
+        }
+
+        .stat-value.streak-value {
+            color: var(--accent);
+        }
+
+        /* === DIFFICULTY INDICATOR === */
+        .difficulty {
+            text-align: center;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 4px;
+        }
+
+        .star {
+            font-size: 18px;
+            color: var(--border);
+            transition: color 0.3s;
+        }
+
+        .star.active {
+            color: var(--gold);
+            text-shadow: 0 0 8px rgba(245, 197, 24, 0.5);
+        }
+
+        .difficulty-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        /* === PUZZLE CARD === */
+        .puzzle-card {
+            background: var(--panel);
+            border: 3px solid var(--border);
+            padding: 24px;
+            margin-bottom: 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .puzzle-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: var(--pixel);
+            height: var(--pixel);
+            background: var(--bg);
+            z-index: 2;
+            box-shadow:
+                calc(100% + var(--pixel) - 2px) 0 0 0 var(--bg);
+        }
+
+        .puzzle-card::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: -2px;
+            width: var(--pixel);
+            height: var(--pixel);
+            background: var(--bg);
+            z-index: 2;
+            box-shadow:
+                calc(100% + var(--pixel) - 2px) 0 0 0 var(--bg);
+        }
+
+        .puzzle-type {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        .puzzle-question {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 22px;
+            color: var(--text);
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .puzzle-hint {
+            font-size: 11px;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        /* === ANSWER SECTION === */
+        .answer-section {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .answer-input {
+            flex: 1;
+            padding: 14px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            background: var(--panel);
+            border: 2px solid var(--border);
+            color: var(--gold);
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .answer-input::placeholder {
+            color: var(--muted);
+        }
+
+        .answer-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(233, 69, 96, 0.4);
+        }
+
+        .answer-input:disabled {
+            opacity: 0.5;
+        }
+
+        /* Hide number input spinners */
+        .answer-input::-webkit-outer-spin-button,
+        .answer-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .answer-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .go-button {
+            padding: 14px 24px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            position: relative;
+        }
+
+        .go-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+        }
+
+        .go-button:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        .go-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* === FEEDBACK AREA === */
+        .feedback {
+            min-height: 80px;
+            text-align: center;
+            padding: 16px;
+            display: none;
+        }
+
+        .feedback.visible {
+            display: block;
+        }
+
+        .feedback-message {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .feedback.correct .feedback-message {
+            color: var(--green);
+        }
+
+        .feedback.wrong .feedback-message {
+            color: var(--accent);
+        }
+
+        .next-button {
+            padding: 10px 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 11px;
+            background: var(--green);
+            color: var(--bg);
+            border: none;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .next-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+        }
+
+        .next-button:active {
+            transform: translateY(1px);
+            box-shadow: none;
+        }
+
+        .feedback.wrong .next-button {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* === STREAK DISPLAY === */
+        .streak-display {
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .streak-label {
+            font-size: 10px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .streak-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .streak-dot {
+            width: 24px;
+            height: 24px;
+            background: var(--panel);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: transparent;
+            transition: all 0.3s;
+        }
+
+        .streak-dot.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--bg);
+            box-shadow: 0 0 8px rgba(245, 197, 24, 0.5);
+        }
+
+        .best-streak {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .best-streak span {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--gold);
+        }
+
+        /* === ANIMATIONS === */
+
+        /* Drop-in on page load */
+        @keyframes dropIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .drop-in {
+            animation: dropIn 0.4s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Bounce on correct */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-15px); }
+            50% { transform: translateY(-5px); }
+            70% { transform: translateY(-10px); }
+        }
+
+        .bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        /* Shake on wrong */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        /* Input flash for invalid */
+        @keyframes flashRed {
+            0%, 100% { border-color: var(--border); }
+            50% { border-color: var(--accent); box-shadow: 0 0 12px rgba(233, 69, 96, 0.6); }
+        }
+
+        .flash-red {
+            animation: flashRed 0.4s ease;
+        }
+
+        /* Particle burst */
+        .particle {
+            position: fixed;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 999;
+            animation: particleFly 1s ease-out forwards;
+        }
+
+        @keyframes particleFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), var(--dy)) scale(0.3);
+            }
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 500px) {
+            .header h1 {
+                font-size: 15px;
+            }
+
+            .puzzle-question {
+                font-size: 18px;
+            }
+
+            .stat-box {
+                padding: 8px 4px;
+            }
+
+            .stat-value {
+                font-size: 14px;
+            }
+
+            .streak-dot {
+                width: 20px;
+                height: 20px;
+                font-size: 8px;
+            }
+
+            .answer-input {
+                font-size: 14px;
+                padding: 12px;
+            }
+
+            .go-button {
+                padding: 12px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- HEADER -->
+        <div class="header drop-in" style="animation-delay: 0s">
+            <h1>&#x1F9EE; MATH QUEST</h1>
+            <p class="subtitle">Solve today's puzzle!</p>
+        </div>
+
+        <!-- STATS BAR -->
+        <div class="stats-bar drop-in" style="animation-delay: 0.1s">
+            <div class="stat-box pixel-corners">
+                <div class="stat-label">SCORE</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-box pixel-corners">
+                <div class="stat-label">&#x1F525; STREAK</div>
+                <div class="stat-value streak-value" id="streak">0</div>
+            </div>
+            <div class="stat-box pixel-corners">
+                <div class="stat-label">LEVEL</div>
+                <div class="stat-value" id="level">1</div>
+            </div>
+        </div>
+
+        <!-- DIFFICULTY INDICATOR -->
+        <div class="difficulty drop-in" style="animation-delay: 0.15s">
+            <div class="stars" id="stars"></div>
+            <div class="difficulty-label" id="difficulty-label">Easy</div>
+        </div>
+
+        <!-- PUZZLE CARD -->
+        <div class="puzzle-card drop-in" style="animation-delay: 0.2s" id="puzzle-card">
+            <div class="puzzle-type" id="puzzle-type">Addition</div>
+            <div class="puzzle-question" id="puzzle-question">...</div>
+            <div class="puzzle-hint" id="puzzle-hint">Loading...</div>
+        </div>
+
+        <!-- ANSWER SECTION -->
+        <div class="answer-section drop-in" style="animation-delay: 0.3s">
+            <input type="number" class="answer-input" id="answer-input"
+                   placeholder="???" autocomplete="off">
+            <button class="go-button" id="go-button">GO!</button>
+        </div>
+
+        <!-- FEEDBACK AREA -->
+        <div class="feedback" id="feedback">
+            <div class="feedback-message" id="feedback-message"></div>
+            <button class="next-button" id="next-button"></button>
+        </div>
+
+        <!-- STREAK DISPLAY -->
+        <div class="streak-display drop-in" style="animation-delay: 0.4s">
+            <div class="streak-label">Daily Streak</div>
+            <div class="streak-dots" id="streak-dots"></div>
+            <div class="best-streak">Best: <span id="best-streak">0</span></div>
+        </div>
+    </div>
+
+    <script>
+        // === CONSTANTS ===
+        const STORAGE_KEY = 'mathquest';
+        const DIFFICULTY_LABELS = ['Easy', 'Medium', 'Hard', 'Expert', 'Master'];
+        const POINTS_MULTIPLIER = 10;
+        const PUZZLES_TO_LEVEL_UP = 5;
+        const MAX_LEVEL = 5;
+        const STREAK_DOTS = 10;
+        const PARTICLE_EMOJIS = ['\u2B50', '\u2728', '\uD83C\uDF89', '\uD83D\uDCA5', '\uD83D\uDD25'];
+
+        // === GAME STATE ===
+        let state = {
+            score: 0,
+            streak: 0,
+            bestStreak: 0,
+            level: 1,
+            puzzlesSolved: 0,
+            currentPuzzle: null
+        };
+
+        // === DOM REFERENCES ===
+        const dom = {
+            score: document.getElementById('score'),
+            streak: document.getElementById('streak'),
+            level: document.getElementById('level'),
+            stars: document.getElementById('stars'),
+            difficultyLabel: document.getElementById('difficulty-label'),
+            puzzleType: document.getElementById('puzzle-type'),
+            puzzleQuestion: document.getElementById('puzzle-question'),
+            puzzleHint: document.getElementById('puzzle-hint'),
+            puzzleCard: document.getElementById('puzzle-card'),
+            answerInput: document.getElementById('answer-input'),
+            goButton: document.getElementById('go-button'),
+            feedback: document.getElementById('feedback'),
+            feedbackMessage: document.getElementById('feedback-message'),
+            nextButton: document.getElementById('next-button'),
+            streakDots: document.getElementById('streak-dots'),
+            bestStreak: document.getElementById('best-streak')
+        };
+
+        // === PERSISTENCE ===
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    score: state.score,
+                    streak: state.streak,
+                    bestStreak: state.bestStreak,
+                    level: state.level,
+                    puzzlesSolved: state.puzzlesSolved
+                }));
+            } catch (e) {
+                // localStorage may be unavailable
+            }
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    state.score = data.score || 0;
+                    state.streak = data.streak || 0;
+                    state.bestStreak = data.bestStreak || 0;
+                    state.level = data.level || 1;
+                    state.puzzlesSolved = data.puzzlesSolved || 0;
+                }
+            } catch (e) {
+                // Start fresh if load fails
+            }
+        }
+
+        // === HELPERS ===
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // === PUZZLE GENERATORS ===
+        function generateAddition(level) {
+            const max = 10 + level * 15;
+            const a = randomInt(1, max);
+            const b = randomInt(1, max);
+            return {
+                type: 'Addition',
+                question: a + ' + ' + b,
+                answer: a + b,
+                hint: 'Add the numbers!'
+            };
+        }
+
+        function generateSubtraction(level) {
+            const max = 10 + level * 15;
+            const b = randomInt(1, max);
+            const a = randomInt(b, max + b);
+            return {
+                type: 'Subtraction',
+                question: a + ' \u2212 ' + b,
+                answer: a - b,
+                hint: 'Subtract!'
+            };
+        }
+
+        function generateMultiplication(level) {
+            const max = Math.min(3 + level * 2, 12);
+            const a = randomInt(2, max);
+            const b = randomInt(2, max);
+            return {
+                type: 'Multiplication',
+                question: a + ' \u00D7 ' + b,
+                answer: a * b,
+                hint: 'Multiply!'
+            };
+        }
+
+        function generateMystery(level) {
+            const max = 5 + level * 8;
+            const answer = randomInt(1, max);
+            const b = randomInt(1, max);
+            const sum = answer + b;
+            return {
+                type: 'Mystery Number',
+                question: '? + ' + b + ' = ' + sum,
+                answer: answer,
+                hint: 'Find the missing number!'
+            };
+        }
+
+        function generateDivision(level) {
+            const maxDivisor = Math.min(2 + level, 10);
+            const maxAnswer = 10 + level * 3;
+            const b = randomInt(2, maxDivisor);
+            const answer = randomInt(1, maxAnswer);
+            const a = b * answer;
+            return {
+                type: 'Division',
+                question: a + ' \u00F7 ' + b,
+                answer: answer,
+                hint: 'Divide evenly!'
+            };
+        }
+
+        const ALL_GENERATORS = [
+            generateAddition,
+            generateSubtraction,
+            generateMultiplication,
+            generateMystery,
+            generateDivision
+        ];
+
+        function generatePuzzle() {
+            // Level 1: first 3 + up to 1 more = 3 types
+            // Level 2+: all 5 types
+            const available = state.level >= 2
+                ? ALL_GENERATORS
+                : ALL_GENERATORS.slice(0, Math.min(3 + state.level - 1, 5));
+            const gen = available[Math.floor(Math.random() * available.length)];
+            state.currentPuzzle = gen(state.level);
+        }
+
+        // === UI UPDATES ===
+        function updateUI() {
+            dom.score.textContent = state.score;
+            dom.streak.textContent = state.streak;
+            dom.level.textContent = state.level;
+            dom.bestStreak.textContent = state.bestStreak;
+            dom.difficultyLabel.textContent = DIFFICULTY_LABELS[state.level - 1];
+            updateStars();
+            updateStreakDots();
+        }
+
+        function updateStars() {
+            dom.stars.innerHTML = '';
+            for (let i = 0; i < MAX_LEVEL; i++) {
+                const star = document.createElement('span');
+                star.className = 'star' + (i < state.level ? ' active' : '');
+                star.textContent = '\u2605';
+                dom.stars.appendChild(star);
+            }
+        }
+
+        function initStreakDots() {
+            dom.streakDots.innerHTML = '';
+            for (let i = 0; i < STREAK_DOTS; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'streak-dot';
+                dom.streakDots.appendChild(dot);
+            }
+        }
+
+        function updateStreakDots() {
+            const dots = dom.streakDots.querySelectorAll('.streak-dot');
+            const filled = Math.min(state.streak, STREAK_DOTS);
+            dots.forEach(function(dot, i) {
+                if (i < filled) {
+                    dot.classList.add('active');
+                    dot.textContent = '\u2605';
+                } else {
+                    dot.classList.remove('active');
+                    dot.textContent = '';
+                }
+            });
+        }
+
+        function displayPuzzle() {
+            const p = state.currentPuzzle;
+            dom.puzzleType.textContent = p.type;
+            dom.puzzleQuestion.textContent = p.question;
+            dom.puzzleHint.textContent = p.hint;
+
+            dom.answerInput.value = '';
+            dom.answerInput.disabled = false;
+            dom.goButton.disabled = false;
+            dom.feedback.classList.remove('visible', 'correct', 'wrong');
+            dom.feedback.style.display = 'none';
+
+            dom.answerInput.focus();
+        }
+
+        // === ANIMATIONS ===
+        function triggerAnimation(el, className) {
+            el.classList.remove(className);
+            void el.offsetWidth; // force reflow
+            el.classList.add(className);
+            el.addEventListener('animationend', function handler() {
+                el.classList.remove(className);
+                el.removeEventListener('animationend', handler);
+            });
+        }
+
+        function spawnParticles() {
+            var rect = dom.puzzleCard.getBoundingClientRect();
+            var cx = rect.left + rect.width / 2;
+            var cy = rect.top + rect.height / 2;
+
+            for (var i = 0; i < 6; i++) {
+                var particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = PARTICLE_EMOJIS[Math.floor(Math.random() * PARTICLE_EMOJIS.length)];
+
+                var angle = (Math.PI * 2 * i) / 6;
+                var dist = randomInt(60, 140);
+                var dx = Math.cos(angle) * dist;
+                var dy = Math.sin(angle) * dist - 60; // bias upward
+
+                particle.style.left = cx + 'px';
+                particle.style.top = cy + 'px';
+                particle.style.setProperty('--dx', dx + 'px');
+                particle.style.setProperty('--dy', dy + 'px');
+
+                document.body.appendChild(particle);
+                particle.addEventListener('animationend', function() {
+                    this.remove();
+                });
+            }
+        }
+
+        // === GAME LOGIC ===
+        function submitAnswer() {
+            var inputVal = dom.answerInput.value.trim();
+
+            if (inputVal === '' || isNaN(parseInt(inputVal, 10))) {
+                triggerAnimation(dom.answerInput, 'flash-red');
+                return;
+            }
+
+            var userAnswer = parseInt(inputVal, 10);
+
+            // Disable input
+            dom.answerInput.disabled = true;
+            dom.goButton.disabled = true;
+
+            if (userAnswer === state.currentPuzzle.answer) {
+                handleCorrect();
+            } else {
+                handleWrong();
+            }
+
+            saveState();
+        }
+
+        function handleCorrect() {
+            var points = POINTS_MULTIPLIER * state.level;
+            state.score += points;
+            state.streak++;
+            if (state.streak > state.bestStreak) {
+                state.bestStreak = state.streak;
+            }
+            state.puzzlesSolved++;
+
+            // Level up check
+            if (state.puzzlesSolved % PUZZLES_TO_LEVEL_UP === 0 && state.level < MAX_LEVEL) {
+                state.level++;
+            }
+
+            // Show feedback
+            dom.feedback.style.display = 'block';
+            dom.feedback.classList.add('visible', 'correct');
+            dom.feedback.classList.remove('wrong');
+            dom.feedbackMessage.textContent = '\u2713 CORRECT! +' + points + ' PTS';
+            dom.nextButton.textContent = 'NEXT PUZZLE \u2192';
+
+            // Animations
+            triggerAnimation(dom.feedbackMessage, 'bounce');
+            spawnParticles();
+
+            updateUI();
+        }
+
+        function handleWrong() {
+            state.streak = 0;
+
+            // Show feedback
+            dom.feedback.style.display = 'block';
+            dom.feedback.classList.add('visible', 'wrong');
+            dom.feedback.classList.remove('correct');
+            dom.feedbackMessage.textContent = '\u2717 NOPE! Answer: ' + state.currentPuzzle.answer;
+            dom.nextButton.textContent = 'TRY ANOTHER \u2192';
+
+            // Animations
+            triggerAnimation(dom.feedbackMessage, 'shake');
+
+            updateUI();
+        }
+
+        function nextPuzzle() {
+            generatePuzzle();
+            displayPuzzle();
+            updateUI();
+        }
+
+        // === EVENT LISTENERS ===
+        dom.goButton.addEventListener('click', submitAnswer);
+
+        dom.nextButton.addEventListener('click', nextPuzzle);
+
+        dom.answerInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                if (!dom.answerInput.disabled) {
+                    submitAnswer();
+                } else if (dom.feedback.classList.contains('visible')) {
+                    nextPuzzle();
+                }
+            }
+        });
+
+        // === INIT ===
+        loadState();
+        initStreakDots();
+        generatePuzzle();
+        displayPuzzle();
+        updateUI();
+    </script>
+</body>
+</html>
